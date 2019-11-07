@@ -7,4 +7,6 @@ Red A14 √
 Brown A15 √
 Black A16 √
 
-Blue might not work
+All sensors work! 
+Checked!
+----19/11/07 17:00
