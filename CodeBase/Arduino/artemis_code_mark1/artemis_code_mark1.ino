@@ -25,8 +25,6 @@ void setup() {
   }
   sensorPtr = 0;
   samplePtr = 0;
-  
-
 }
 
 void loop() {

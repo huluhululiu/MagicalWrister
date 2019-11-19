@@ -1,4 +1,4 @@
-
+import matplotlib.pyplot as plt
 import serial
 import csv
 import sys
@@ -9,7 +9,7 @@ if (len(sys.argv)-1) == 2:
   port = sys.argv[2]
 else:
   fileName = 'output.csv'
-  port = '/dev/tty.wchusbserial1410'
+  port = '/dev/cu.usbserial-1420'
 
 try:
     ser = serial.Serial(port, baudrate=115200)

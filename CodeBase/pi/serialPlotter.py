@@ -3,13 +3,27 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.patches as patches
 import matplotlib.path as path
-
+import matplotlib.animation as animation
+import time
+import threading
 port = '/dev/cu.usbserial-1420'
 fig, ax = plt.subplots()
 x = ['A0','A1','A2','A3','A5','A14','A15','A16']
-ser_bytes = [0,1,0,0,0,0,0,0]
-rect = ax.bar(x, ser_bytes)
-plt.ion()
+plt.ylim(0, 3)
+ser_bytes = [0,0,0,0,0,0,0,0]
+rbarcollection = plt.bar(x, ser_bytes)
+def update(i):
+  print("here")
+  for i, b in enumerate(rbarcollection):
+    b.set_height(ser_bytes[i])
+    plt.draw()
+def graph():
+  anim = animation.FuncAnimation(fig, update, frames=100, interval=100)
+
+# thread1 = threading.Thread(target = graph)
+# thread1.start()
+
+plt.show()
 def press(event):
     print('press', event.key)
     sys.stdout.flush()
@@ -29,15 +43,7 @@ try:
         print(ser_bytes)
         if(len(ser_bytes) is not 8):
           continue
-        ser_bytes = [float(x) for x in ser_bytes]
-        ser_bytes = ser_bytes/np.linalg.norm(ser_bytes, ord=2, axis=0, keepdims=True)
-
-        plt.ylim(0, 3)
-        plt.bar(x, ser_bytes)
-        plt.draw()
-        plt.pause(0.00001)
-        plt.cla()
-
+        ser_bytes = [float(x) for x in ser_bytes if x is not '']
     ser.close
 except:
     print("Unexpected error:", sys.exc_info()[0])
