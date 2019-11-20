@@ -1,12 +1,7 @@
-
+import sys
 import paho.mqtt.client as mqtt #import the client1
 import time
 
-# def on_message(client, userdata, message):
-#     print("message received " ,str(message.payload.decode("utf-8")))
-#     print("message topic=",message.topic)
-#     print("message qos=",message.qos)
-#     print("message retain flag=",message.retain)
 def on_connect(client, userdata, flags, rc):
  
     if rc == 0:
@@ -31,7 +26,7 @@ def on_publish(client,userdata,result):             #create function for callbac
 # b=Bridge("192.168.0.199")
 # b.connect()
 # b.get_api()
-broker_address="18.218.211.137"
+broker_address=str(sys.argv[1])
 user = "hulu"
 password = "1747088"
 Connected = False 
@@ -63,15 +58,4 @@ except KeyboardInterrupt:
     client.disconnect()
     client.loop_stop()
 
-# try:
-#     number=input("enter a number")
-#     client.publish("test",number)
-
-#     while True:
-#         time.sleep(1)
-        
-# except KeyboardInterrupt:
-#     print("exiting")
-#     client.disconnect()
-#     client.loop_stop()
 
