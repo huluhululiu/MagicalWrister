@@ -17,6 +17,21 @@ class Gesture(enum.Enum):
     tightFist = 100
     openHand = 255
 
+def translate(value, leftMin, leftMax, rightMin, rightMax):
+    # Figure out how 'wide' each range is
+    leftSpan = leftMax - leftMin
+    rightSpan = rightMax - rightMin
+    # Convert the left range into a 0-1 range (float)
+    if(value > leftMax):
+      value = leftMax
+    valueScaled = float(value - leftMin) / float(leftSpan)
+    # Convert the 0-1 range into a value in the right range.
+    return rightMin + (valueScaled * rightSpan)
+
+def getAnalogPressure(ser_bytes):
+    averageReading = sum(ser_bytes)/len(ser_bytes)
+    return translate(averageReading, 0, 13000, 0, 255)
+
 def getGesture(ser_bytes):
   averageReading = sum(ser_bytes)/len(ser_bytes)
   # print(averageReading)
@@ -41,7 +56,7 @@ try:
     while True:
         ser_bytes = getSerBytes(ser_bytes)
         new_gesture = getGesture(ser_bytes)
-        #print(new_gesture.name)
+        #print(getAnalogPressure(ser_bytes))
         if(new_gesture != current_gesture):
             #client.publish("test",new_gesture.value)
             print("Sent Gesture", new_gesture.name, "val: ", new_gesture.value)
