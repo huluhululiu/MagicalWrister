@@ -6,8 +6,8 @@ import numpy as np
 import time
 import threading
 import enum
-
-port = '/dev/cu.usbserial-1420'
+import math
+usbport = '/dev/cu.usbserial-1410'
 
 ser_bytes = [0,0,0,0,0,0,0,0]
 
@@ -30,7 +30,7 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
 def getGesture(ser_bytes):
   averageReading = sum(ser_bytes)/len(ser_bytes)
   #print(averageReading)
-  if(averageReading < 4000):
+  if(averageReading < 7500):
     return Gesture.looseFist
   else:
     return Gesture.openHand
@@ -91,16 +91,20 @@ client.loop_start()        #start the loop
 while Connected != True:    #Wait for connection
     time.sleep(0.1)
 try:
-    ser = serial.Serial(port, baudrate=115200)
+    ser = serial.Serial(usbport, baudrate=115200)
     ser.flushInput()
     current_gesture = Gesture.openHand
+    current_read = 0
     while True:
         ser_bytes = getSerBytes(ser_bytes)
         new_gesture = getGesture(ser_bytes)
-        #print(getAnalogPressure(ser_bytes))
+        analogRead = getAnalogPressure(ser_bytes)
+        if(abs(current_read - analogRead) > 10):
+            client.publish("test",int(analogRead))
+            current_read = analogRead
         if(new_gesture != current_gesture):
         #value =input('Enter the message:')
-            client.publish("test",new_gesture.value)
+            #client.publish("test",new_gesture.value)
             print("Sent Gesture", new_gesture.name, "val: ", new_gesture.value)
             current_gesture = new_gesture
 
