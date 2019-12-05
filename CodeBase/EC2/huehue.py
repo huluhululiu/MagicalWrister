@@ -1,13 +1,20 @@
+#!/usr/bin/python
 import sys
+import random
 from phue import Bridge
 import paho.mqtt.client as mqtt #import the client1
 import time
-closeHand=1
-openPalm=2
-yeahGesture=3
-rockStar=4
-okGesture=5
-
+import subprocess
+import json
+import re
+closeHand=0
+openPalm=1
+yeahGesture=2
+rockStar=3
+cmd="mosquitto_sub -h cloud.internalpositioning.com -p 1884 -u demo521 -P fvfqd -t 'demo521/location/band' -C 1"
+# pro=subprocess.Popen(cmd, shell=True,).communicate()
+reject="rejectarea"
+answer="answerarea"
 def on_connect(client, userdata, flags, rc):
  
     if rc == 0:
@@ -38,21 +45,34 @@ def on_message(client, userdata, message):
     #     b.set_light(2,'bri',255)
 
 def Gesture(gestureChoice):
-    b.set_light(2,'on',False)
+    b.set_light(3,'on',False)
     time.sleep(0.3)
-    b.set_light(2,'on',True)
+    b.set_light(3,'on',True)
     if gestureChoice==closeHand:
-        b.set_light(2,'bri',30)
+        command =  {'on' : False}
+       
     elif gestureChoice==openPalm:
-        b.set_light(2,'bri',240)
+        command =  {'on' : True, 'bri' : 254,"xy": [0.2, 0.3366]}
+        
     elif gestureChoice==yeahGesture:
-        b.set_light(2,'bri',60)
+        command =  {'on' : True, 'bri' : 254,"xy": [0.8, 0.9]}
+
     elif gestureChoice==rockStar:
-        b.set_light(2,'bri',255)
-    elif gestureChoice==okGesture:
-        b.set_light(2,'bri',50)
+        command =  {'on' : True, 'bri' : 254,"xy": [0.7, 0.1]}
     else:
-        b.set_light(2,'bri',150)
+        command =  {'on' : True, 'bri' : 254,"xy": [0.8, 0.1]}
+
+    # d=subprocess.check_output(cmd, shell=True)
+
+    # y= json.loads(d)
+
+    # s=str(y["guesses"][0]['location'])
+    # s=re.sub(r'[^\w]', '', s)
+    # print("s is",s)
+    # if re.sub(r'[^\w]', ' ', s)==reject:
+        
+
+    b.set_light(3,command)
 b=Bridge("192.168.0.199")
 b.connect()
 b.get_api()
@@ -68,7 +88,8 @@ client = mqtt.Client("hululululu")               #create new instance
 client.username_pw_set(user, password=password)    #set username and password
 client.on_connect= on_connect                      #attach function to callback
 client.on_message= on_message                      #attach function to callback
- 
+
+
 
       #start the loop
          #connect to broker
