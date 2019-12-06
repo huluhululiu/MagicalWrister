@@ -3,7 +3,7 @@
 #define VDD 3.3
 #define SAMPLES 50
 #define NUMSENSOR 8
-#define SAMPLE_DELAY 80 //ms
+#define SAMPLE_DELAY 100 //ms
 #define WINDOW_SIZE 10 //size of sliding window for sliding average
 struct sensor{
   int pin;
@@ -15,7 +15,7 @@ int sensorPtr;
 sensor sensorArray [NUMSENSOR];
 int samplePtr;
 double window [NUMSENSOR][WINDOW_SIZE];
-
+boolean flip = false;
 void setup() {
   analogReadResolution(14);
   pinMode(8, INPUT);
@@ -28,14 +28,10 @@ void setup() {
   sensorPtr = 0;
   samplePtr = 0;
 }
-int flip = 0;
-String lastLine = "";
-String newLine = "";
+
 void loop() {
   double sVolt;
   double reading;
-  newLine = "";
-  boolean switchOn = digitalRead(8);
   for (int i=0; i<SAMPLES; i++){
     for(int j=0; j<NUMSENSOR; j++){
       sVolt = VDD * (analogRead(sensorArray[j].pin)/16384.0);
@@ -45,14 +41,16 @@ void loop() {
       sensorArray[j].sum = reading + sensorArray[j].sum;
     }
   }
-  
-  for (int i = 0; i < NUMSENSOR; i++){
-    newLine += String(sensorArray[i].sum / SAMPLES) + ",";
-    sensorArray[i].sum = 0;
-  }
-  newLine += switchOn;
-  if(switchOn){
-     Serial.println(newLine);
-  }
+     for (int i = 0; i < NUMSENSOR; i++){
+        if(digitalRead(8) == flip){
+          Serial.print(sensorArray[i].sum / SAMPLES);
+          Serial.print(",");
+        }
+        sensorArray[i].sum = 0;
+     }
+     if(digitalRead(8) == flip){
+        Serial.println("");
+        flip = !flip;
+     }
   delay(SAMPLE_DELAY);
 }

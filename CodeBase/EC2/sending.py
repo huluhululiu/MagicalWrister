@@ -7,47 +7,12 @@ import time
 import threading
 import enum
 
-port = '/dev/cu.usbserial-1420'
-
-ser_bytes = [0,0,0,0,0,0,0,0]
-
 class Gesture(enum.Enum): 
-    looseFist = 0
-    tightFist = 100
-    openHand = 255
+    flatDown = 0
+    flatLeft = 1
+    tightFist = 2
+    peaceOut = 3
 
-def translate(value, leftMin, leftMax, rightMin, rightMax):
-    # Figure out how 'wide' each range is
-    leftSpan = leftMax - leftMin
-    rightSpan = rightMax - rightMin
-    # Convert the left range into a 0-1 range (float)
-    if(value > leftMax):
-      value = leftMax
-    valueScaled = float(value - leftMin) / float(leftSpan)
-    # Convert the 0-1 range into a value in the right range.
-    return rightMin + (valueScaled * rightSpan)
-
-def getGesture(ser_bytes):
-  averageReading = sum(ser_bytes)/len(ser_bytes)
-  #print(averageReading)
-  if(averageReading < 4000):
-    return Gesture.looseFist
-  else:
-    return Gesture.openHand
-
-def getAnalogPressure(ser_bytes):
-    averageReading = sum(ser_bytes)/len(ser_bytes)
-    return translate(averageReading, 0, 13000, 0, 255)
-
-def getSerBytes(ser_bytes):
-  numBytes = ser.inWaiting()
-  if(numBytes>0):
-    ser_bytes = str(ser.readline())[:-4]
-    ser_bytes = str(re.sub('([^\d,.])','', ser_bytes))
-    ser_bytes = ser_bytes.split(',')
-    ser_bytes = [float(x) for x in ser_bytes if x is not '']
-  return ser_bytes
- 
 def on_connect(client, userdata, flags, rc):
  
     if rc == 0:
@@ -77,7 +42,6 @@ user = "hulu"
 password = "1747088"
 Connected = False 
 port=1883
-
 
 client = mqtt.Client("hululu")   
 client.on_message=on_message            #create new instance
