@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 import pandas as pd
 import time
-port = '/dev/cu.usbserial-1420'
+port = '/dev/cu.usbserial-1410'
 ser_bytes = [0,0,0,0,0,0,0,0]
 
 def getSerBytes(ser_bytes):
