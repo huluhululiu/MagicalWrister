@@ -11,9 +11,11 @@ In our hardware part, we use [Arduino Artemis Nano](https://learn.sparkfun.com/t
 ### Machine learning
 After upload the arduino code to the board, we read the sensor data through the API of serial in python and use machine learning from the following packages. Please remeber to download and install the following packages of python:
 
- [tensorflow](https://www.tensorflow.org/install/pip?lang=python3)
  **************package needed*************************
- 
+ sklearn 0.20.1 [https://scikit-learn.org/stable/install.html]
+ joblib  0.14.0 [https://joblib.readthedocs.io/en/latest/]
+ pandas  0.23.4 [https://pandas.pydata.org/pandas-docs/stable/install.html]
+
  ### Edge host
  Our edge host can be run on raspberry pi or laptop as a publisher and subscriber of MQTT, and a controller of smart home devices. In order to run the mqtt client library and hue light control in python 3.7, we suggest installation of following packages:
  [paho-mqtt](https://pypi.org/project/paho-mqtt/) and [phue](https://github.com/studioimaginaire/phue)
